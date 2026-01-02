@@ -1,165 +1,207 @@
+/**
+ * Digitaler Techniker Dashboard
+ * Application Entry Point
+ */
+
 const express = require('express');
 const path = require('path');
 const session = require('express-session');
-const bodyParser = require('body-parser');
-const fs = require('fs-extra');
 const crypto = require('crypto');
 const helmet = require('helmet');
-const rateLimit = require('express-rate-limit');
 const cors = require('cors');
-require('dotenv').config({ path: './envs/site.env', debug: false });
+const rateLimit = require('express-rate-limit');
 const fileUpload = require('express-fileupload');
+const fs = require('fs-extra');
 
-// const indexRouter = require('./routes/index');
-// const dataRouter = require('./routes/data');
-// const importExport = require('./routes/import-export');
-// const analysisRouter = require('./routes/analysis');
+require('dotenv').config({ path: './envs/site.env' });
+
+/* -------------------------------------------------------------------------- */
+/* CORE                                                                       */
+/* -------------------------------------------------------------------------- */
+
+const Logger = require('./src/core/logger');
+const Database = require('./src/core/database');
+const Cache = require('./src/core/cache');
+const EventBus = require('./src/core/event-bus');
+const Realtime = require('./src/core/realtime');
+const Scheduler = require('./src/core/scheduler');
+
+/* -------------------------------------------------------------------------- */
+/* MIDDLEWARES                                                                */
+/* -------------------------------------------------------------------------- */
+
+const authMiddleware = require('./src/middlewares/auth.middleware');
+const roleMiddleware = require('./src/middlewares/role.middleware');
+const auditMiddleware = require('./src/middlewares/audit.middleware');
+const rateLimitMiddleware = require('./src/middlewares/rateLimit.middleware');
+const validationMiddleware = require('./src/middlewares/validation.middleware');
+const errorMiddleware = require('./src/middlewares/error.middleware');
+
+/* -------------------------------------------------------------------------- */
+/* ROUTES                                                                     */
+/* -------------------------------------------------------------------------- */
+
+const authRoutes = require('./src/routes/auth.routes');
+const devicesRoutes = require('./src/routes/devices.routes');
+const jobsRoutes = require('./src/routes/jobs.routes');
+const partsRoutes = require('./src/routes/parts.rooutes');
+const qcRoutes = require('./src/routes/qc.routes');
+const reportsRoutes = require('./src/routes/reports.routes');
+const techniciansRoutes = require('./src/routes/technicians.routes');
+const workflowRoutes = require('./src/routes/workflow.routes');
+const realtimeRoutes = require('./src/routes/realtime.routes');
+const systemRoutes = require('./src/routes/system.routes');
+const monitoringRoutes = require('./src/routes/monitoring.routes');
+const auditRoutes = require('./src/routes/audit.routes');
+const plentyRoutes = require('./src/routes/plenty.routes');
+const usersRoutes = require('./src/routes/users.routes');
+
+/* -------------------------------------------------------------------------- */
+/* APP INIT                                                                   */
+/* -------------------------------------------------------------------------- */
 
 const app = express();
+fs.ensureDirSync(path.join(__dirname, 'logs'));
 
-// Middleware
-// Security Middleware
-// app.use(helmet({
-//     contentSecurityPolicy: {
-//         directives: {
-//             defaultSrc: ["'self'"],
-//             styleSrc: ["'self'", "'unsafe-inline'", "https://cdnjs.cloudflare.com"],
-//             scriptSrc: ["'self'"],
-//             imgSrc: ["'self'", "data:", "https:"]
-//         }
-//     }
-// }));
+/* -------------------------------------------------------------------------- */
+/* BOOTSTRAP CORE                                                             */
+/* -------------------------------------------------------------------------- */
 
-// CORS Configuration
+Logger.init();
+Database.init();
+Cache.init();
+EventBus.init();
+Realtime.init();
+Scheduler.init();
+
+/* -------------------------------------------------------------------------- */
+/* GLOBAL SECURITY & REQUEST MIDDLEWARE                                       */
+/* -------------------------------------------------------------------------- */
+
+app.use(helmet());
+
 app.use(cors({
     origin: process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:3000'],
     credentials: true
 }));
 
-// Rate Limiting
 app.use(rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 1000, // limit each IP to 100 requests per windowMs
-    message: 'Too many requests from this IP, please try again later.'
+    windowMs: 15 * 60 * 1000,
+    max: 1000,
+    standardHeaders: true,
+    legacyHeaders: false
 }));
 
-// Body Parser Middleware
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+app.use(fileUpload());
+
 app.use(session({
-    secret: process.env.SESSION_SECRET || crypto.randomBytes(32).toString('hex'),
+    name: 'techniker-dashboard.sid',
+    secret: process.env.SESSION_SECRET || crypto.randomBytes(48).toString('hex'),
     resave: false,
     saveUninitialized: false,
     cookie: {
         secure: process.env.NODE_ENV === 'production',
         httpOnly: true,
-        maxAge: 24 * 60 * 60 * 1000 // 24 Stunden
+        sameSite: 'lax',
+        maxAge: 24 * 60 * 60 * 1000
     }
 }));
-app.use(fileUpload());
 
-// Logging Middleware
-app.use((req, _, next) => {
-    console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
-    next();
-});
+/* -------------------------------------------------------------------------- */
+/* STATIC & VIEW ENGINE                                                       */
+/* -------------------------------------------------------------------------- */
 
-// Statische Dateien
 app.use(express.static(path.join(__dirname, 'src/public')));
 
-// View Engine
 app.set('views', path.join(__dirname, 'src/views'));
 app.set('view engine', 'pug');
 
-// Globale Variablen für Templates
-app.use((_, res, next) => {
-    res.locals.currentYear = new Date().getFullYear();
-    res.locals.appName = 'Techniker Dashboard';
-    res.locals.appVersion = '0.0.1';
+app.use((req, res, next) => {
+    res.locals.appName = 'Digitaler Techniker Dashboard';
+    res.locals.appVersion = '1.0.0';
     res.locals.env = process.env.NODE_ENV || 'development';
+    res.locals.year = new Date().getFullYear();
+    res.locals.user = req.session?.user || null;
     next();
 });
 
-// Routen
-const router = express.Router();
+/* -------------------------------------------------------------------------- */
+/* PUBLIC ROUTES                                                              */
+/* -------------------------------------------------------------------------- */
 
-router.get('/', (req, res) => { 
-    res.render('app');
-})
-// app.use('/', indexRouter);
-// app.use('/data', dataRouter);
-// app.use('/import-export', importExport)
-// app.use('/analysis', analysisRouter);
+app.get('/', (_, res) => res.render('welcome'));
+app.use('/auth', authRoutes);
 
-// 404 Handler
-app.use((req, res, _) => {
+/* -------------------------------------------------------------------------- */
+/* AUTHENTICATED ROUTES                                                       */
+/* -------------------------------------------------------------------------- */
+
+app.use(authMiddleware);
+
+app.get('/dashboard', auditMiddleware('DASHBOARD_VIEW'), (req, res) => {
+    res.render('dashboard/index');
+});
+
+app.use('/devices',
+    rateLimitMiddleware({ max: 300 }),
+    auditMiddleware(),
+    devicesRoutes
+);
+
+app.use('/jobs', auditMiddleware(), jobsRoutes);
+app.use('/parts', auditMiddleware(), partsRoutes);
+app.use('/qc', auditMiddleware(), qcRoutes);
+app.use('/reports', roleMiddleware(['admin', 'manager']), auditMiddleware(), reportsRoutes);
+app.use('/technicians', auditMiddleware(), techniciansRoutes);
+app.use('/workflow', auditMiddleware(), workflowRoutes);
+app.use('/realtime', realtimeRoutes);
+app.use('/plenty', roleMiddleware('admin'), auditMiddleware(), plentyRoutes);
+app.use('/users', roleMiddleware('admin'), auditMiddleware(), usersRoutes);
+app.use('/audit', roleMiddleware('admin'), auditRoutes);
+app.use('/monitoring', roleMiddleware('admin'), monitoringRoutes);
+app.use('/system', roleMiddleware('admin'), systemRoutes);
+
+/* -------------------------------------------------------------------------- */
+/* 404                                                                       */
+/* -------------------------------------------------------------------------- */
+
+app.use((_, res) => {
     res.status(404).render('error', {
-        title: '404 - Seite nicht gefunden',
         status: 404,
-        error: 'Die angeforderte Seite konnte nicht gefunden werden.',
-        url: req.url,
-        method: req.method
+        title: '404 – Nicht gefunden',
+        message: 'Diese Route existiert nicht.'
     });
 });
 
-// Error Handling Middleware
-app.use((err, req, res, _) => {
-    console.error('❌ Fehler:', err.stack);
+/* -------------------------------------------------------------------------- */
+/* ERROR HANDLER                                                              */
+/* -------------------------------------------------------------------------- */
 
-    // Log error to file
-    const errorLog = {
-        timestamp: new Date().toISOString(),
-        url: req.url,
-        method: req.method,
-        error: err.message,
-        stack: err.stack,
-        userAgent: req.get('User-Agent'),
-        ip: req.ip
-    };
+app.use(errorMiddleware);
 
-    // Asynchron loggen
-    fs.appendFile(
-        path.join(__dirname, 'logs', 'errors.log'),
-        JSON.stringify(errorLog) + '\n'
-    ).catch(logErr => console.error('Fehler beim Loggen:', logErr));
-
-    // Error response
-    const status = err.status || 500;
-    res.status(status).render('error', {
-        title: `${status} - Fehler`,
-        status: status,
-        error: 'Ein Fehler ist aufgetreten. Bitte versuchen Sie es später erneut.',
-        url: req.url,
-        method: req.method,
-        // Remove stack trace to prevent information disclosure
-    });
-});
-
-// Ensure logs directory exists
-fs.ensureDir(path.join(__dirname, 'logs')).catch(err => {
-    console.error('Fehler beim Erstellen des Log-Verzeichnisses:', err);
-});
+/* -------------------------------------------------------------------------- */
+/* SERVER                                                                     */
+/* -------------------------------------------------------------------------- */
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`
-    🚀 Server gestartet!
-    
-    📍 Port: ${PORT}
-    🌐 URL: http://localhost:${PORT}
-    📁 Environment: ${process.env.NODE_ENV || 'development'}
-    
-    ✅ Bereit für Verbindungen...
-    `);
+const server = app.listen(PORT, () => {
+    Logger.info(`Server läuft auf http://localhost:${PORT}`);
 });
 
-// Graceful Shutdown
-process.on('SIGTERM', () => {
-    console.log('🔄 SIGTERM empfangen. Server wird heruntergefahren...');
-    process.exit(0);
-});
+Realtime.attach(server);
 
-process.on('SIGINT', () => {
-    console.log('🔄 SIGINT empfangen. Server wird heruntergefahren...');
-    process.exit(0);
-});
+/* -------------------------------------------------------------------------- */
+/* GRACEFUL SHUTDOWN                                                          */
+/* -------------------------------------------------------------------------- */
+
+const shutdown = (signal) => {
+    Logger.warn(`Shutdown: ${signal}`);
+    Scheduler.shutdown();
+    Database.close();
+    server.close(() => process.exit(0));
+};
+
+process.on('SIGINT', shutdown);
+process.on('SIGTERM', shutdown);
