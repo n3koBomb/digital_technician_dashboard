@@ -33,7 +33,7 @@ mixin sidebar(options)
         .sidebar__user
             .sidebar__user-avatar DE
             .sidebar__user-info
-                .sidebar__user-name Default User
-                .sidebar__user-role Administrator
+                .sidebar__user-name #{user.firstName} #{user.lastName}
+                .sidebar__user-role= user.role
             button.sidebar__logout
                 i.far.fa-arrow-right-from-bracket.fa-lg

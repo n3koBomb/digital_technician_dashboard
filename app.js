@@ -183,7 +183,8 @@ app.get('/dashboard', (req, res) => {
             pending: 0
         },
         user: {
-            name: "Mamamia",
+            firstName: "Mamamia",
+            lastName: "Mario",
             role: "technician", // admin | goods_receiving | technician | qc_inspector | analyzer | default
             email: "test@gmx.de"
         },

@@ -748,6 +748,10 @@ pre {
     line-height: 1rem;
     font-weight: 500;
     color: hsl(var(--muted-foreground));
+
+    &::first-letter {
+        text-transform: uppercase;
+    }
 }
 
 .sidebar__logout {
