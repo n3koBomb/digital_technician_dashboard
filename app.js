@@ -185,7 +185,7 @@ app.get('/dashboard', (req, res) => {
         user: {
             firstName: "Mamamia",
             lastName: "Mario",
-            role: "technician", // admin | goods_receiving | technician | qc_inspector | analyzer | default
+            role: "admin", // admin | goods_receiving | technician | qc_inspector | analyzer | default
             email: "test@gmx.de"
         },
         stats: {
