@@ -37,14 +37,30 @@ mixin activity(activities)
             .widget.widget--workflow
                 .section-header
                     h3.section-header__title Workflow Status
-                .workflow-list
-                    //- each item in workflow
-                    .workflow-item
-                        .workflow-item__status Goods Receipt
-                        .workflow-item__count
-                .workflow-summary
-                    p.workflow-summary__label Completed Today
-                    p.workflow-summary__value 0
+                .workflow-container
+                    .workflow-list
+                        //- each item in workflow
+                        .workflow-item
+                            .workflow-item__status Goods Receipt
+                            .workflow-item__count 12
+                        .workflow-item
+                            .workflow-item__status Goods Receipt
+                            .workflow-item__count 12
+                        .workflow-item
+                            .workflow-item__status Goods Receipt
+                            .workflow-item__count 12
+                        .workflow-item
+                            .workflow-item__status Goods Receipt
+                            .workflow-item__count 12
+                        .workflow-item
+                            .workflow-item__status Goods Receipt
+                            .workflow-item__count 12
+                        .workflow-item
+                            .workflow-item__status Goods Receipt
+                            .workflow-item__count 12
+                    .workflow-summary
+                        p.workflow-summary__label Completed Today
+                        p.workflow-summary__value 0
             .widget.widget--workload
                 .section-header
                     h3.section-header__title
