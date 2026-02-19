@@ -12,25 +12,25 @@ mixin topbar(options)
 
     - var currentHeadline = headlineMap[options.activePath] || null
 
-    .topbar__header
+    .topbar__header(data-css="flex flex-col")
         if currentHeadline
-            h1.topbar__title
+            h1.topbar__title(data-css="text-lg font-semibold text-foreground")
                 | #{currentHeadline.heading}
                 if options.activePath === "/dashboard"
                     | #{user.firstName}
-            p.topbar__subtitle
+            p.topbar__subtitle(data-css="text-xs text-muted-foreground")
                 | #{currentHeadline.paragraph}
                 if options.activePath === "/dashboard"
                     |  #{weekday}, #{month} #{dayNumber}
-    .topbar__spacer
-    .topbar__search
-        i.far.fa-lg.fa-magnifying-glass.topbar__search-icon
-        input(type="text" placeholder="Search devices, IMEI...").topbar__search-input
-    .topbar__sync
-        .topbar__sync-status
-            .topbar__sync-indicator
-            span.topbar__sync-text#syncSpanText Synced 21:22
-        button(type="button").topbar__sync-button
+    .topbar__spacer(data-css="flex-1")
+    .topbar__search(data-css="relative w-72")
+        i.far.fa-lg.fa-magnifying-glass.topbar__search-icon(data-css="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground")
+        input(type="text" placeholder="Search devices, IMEI...").topbar__search-input(data-css="flex h-10 w-full rounded-md border px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm pl-9 bg-muted/50 border-border")
+    .topbar__sync(data-css="flex items-center gap-2 text-sm")
+        .topbar__sync-status(data-css="flex items-center gap-1.5 text-muted-foreground")
+            .topbar__sync-indicator(data-css="h-2 w-2 rounded-full bg-status-completed animate-pulse")
+            span.topbar__sync-text#syncSpanText(data-css="text-xs") Synced 21:22
+        button(type="button").topbar__sync-button(data-css="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50")
             i.far.fa-arrows-rotate.fa-lg
 
     button.topbar__notification-button
