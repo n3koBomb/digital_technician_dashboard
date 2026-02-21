@@ -10,30 +10,31 @@ mixin sidebar(options)
     - var filteredNav = navigation.filter(item => { if (!user) return item.roles.includes('default'); return item.roles.includes(userRole); });
     - var getBadgeCount = (badgeType) => { if (badgeType === "rework" ) return stats.reworkRate.total; if (badgeType === "sync") return jobQueue.unsynced.total; }
 
-    .sidebar__header(data-css="flex h-16 items-center gap-2 border-b border-border px-4")
-        .sidebar__logo(data-css="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-primary")
+    .sidebar__header(class="flex h-16 items-center gap-2 border-b border-border px-4" data-css="sidebar__header")
+        .sidebar__logo(class="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-primary" data-css="sidebar__logo")
             i.far.fa-wrench.fa-lg
-        .sidebar__brand(data-css="flex flex-col")
-            .sidebar__brand-title(data-css="text-sm font-bold text-foreground") RepairTech
-            .sidebar__brand-subtitle(data-css="text-xs text-muted-foreground") Dashboard
-        button.sidebar__resizer(data-sidebar-resizer data-css="")
+        .sidebar__brand(class="flex flex-col" data-css="sidebar__brand")
+            .sidebar__brand-title(class="text-sm font-bold text-foreground" data-css="sidebar__brand-title") RepairTech
+            .sidebar__brand-subtitle(class="text-xs text-muted-foreground" data-css="sidebar__brand-subtitle") Dashboard
+        button(data-sidebar-resizer class="" data-css="sidebar__resizer")
             i.far.fa-sidebar.fa-lg
 
-    nav.sidebar__nav(role="navigation" aria-label="Hauptnavigation" data-css="flex-1 space-y-1 overflow-y-auto p-3")
+    nav(role="navigation" aria-label="Hauptnavigation" class="flex-1 space-y-1 overflow-y-auto p-3" data-css="sidebar__nav")
         each item in filteredNav
             - var isActive = activePath === item.href;
             - var badgeCount = getBadgeCount(item.badge);
-            a.sidebar__nav-link(href=item.href hx-get=item.href hx-target="#app-content" hx-push-url="true" hx-swap="innerHTML" class=isActive ? "is-active" : "" data-css="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all bg-primary/10 text-primary glow-primary")
-                span.sidebar__nav-icon(data-css="h-5 w-5 text-primary")
+            a(href=item.href hx-get=item.href hx-target="#app-content" hx-push-url="true" hx-swap="innerHTML" class=`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all bg-primary/10 text-primary glow-primary ${isActive ? 'is-active' : ''}` data-css="sidebar__nav-link")
+                span(class="h-5 w-5 text-primary" data-css="sidebar__nav-icon")
                     i(class=item.icon)
-                span.sidebar__nav-label(data-css="flex-1")= item.name
+                span(class="flex-1" data-css="sidebar__nav-label")= item.name
                 if (badgeCount > 0)
-                    div.sidebar__nav-badge(class=(item.badge === "rework") ? "is-destructive" : "is-secondary" data-css="inline-flex items-center rounded-full border px-2.5 py-0.5 font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent text-xs")= badgeCount
-    .sidebar__footer(data-css="border-t border-border p-3")
-        .sidebar__user(data-css="flex items-center gap-3 rounded-lg bg-sidebar-accent p-3")
-            .sidebar__user-avatar(data-css="flex h-9 w-9 items-center justify-center rounded-full bg-primary/20 text-primary font-semibold text-sm") DE
-            .sidebar__user-info(data-css="flex-1 min-w-0")
-                .sidebar__user-name(data-css="truncate text-sm font-medium text-foreground") #{user.firstName} #{user.lastName}
-                .sidebar__user-role(data-css="truncate text-xs text-muted-foreground")= user.role
-            button.sidebar__logout(data-css="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors")
+                    div(class=`inline-flex items-center rounded-full border px-2.5 py-0.5 font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent text-xs ${(item.badge === 'rework') ? 'is-destructive' : 'is-secondary'}` data-css="sidebar__nav-badge")= badgeCount
+
+    .sidebar__footer(class="border-t border-border p-3" data-css="sidebar__footer")
+        .sidebar__user(class="flex items-center gap-3 rounded-lg bg-sidebar-accent p-3" data-css="sidebar__user")
+            .sidebar__user-avatar(class="flex h-9 w-9 items-center justify-center rounded-full bg-primary/20 text-primary font-semibold text-sm" data-css="sidebar__user-avatar") DE
+            .sidebar__user-info(class="flex-1 min-w-0" data-css="sidebar__user-info")
+                .sidebar__user-name(class="truncate text-sm font-medium text-foreground" data-css="sidebar__user-name") #{user.firstName} #{user.lastName}
+                .sidebar__user-role(class="truncate text-xs text-muted-foreground" data-css="sidebar__user-role")= user.role
+            button(class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors" data-css="sidebar__logout")
                 i.far.fa-arrow-right-from-bracket.fa-lg

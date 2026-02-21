@@ -22,17 +22,17 @@ block body
             +notifications()
 
         //- Hauptcontainer
-        .app-container(data-css="flex h-screen overflow-hidden")
+        div(class="flex h-screen overflow-hidden" data-css="app-container")
             //- Sidebar (Navigation / Rollenabhängig)
-            aside.app-sidebar(data-css="flex h-screen w-64 flex-col bg-gradient-sidebar border-r border-border")
+            aside(class="flex h-screen w-64 flex-col bg-gradient-sidebar border-r border-border" data-css="app-sidebar")
                 +sidebar({
                     activePath: currentPath,
                     user
                 })
             //- Content-Bereich
-            .app-main(data-css="flex flex-1 flex-col overflow-hidden")
+            div(class="flex flex-1 flex-col overflow-hidden" data-css="app-main")
                 //- Topbar (User, Breadcrumbs, Actions)
-                header.app-topbar(role="banner" data-css="sticky top-0 z-40 flex h-16 items-center gap-4 border-b border-border bg-background/95 backdrop-blur px-6")
+                header(role="banner" class="sticky top-0 z-40 flex h-16 items-center gap-4 border-b border-border bg-background/95 backdrop-blur px-6" data-css="app-topbar")
                     +topbar({
                         activePath: currentPath,
                         user
