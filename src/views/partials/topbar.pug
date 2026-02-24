@@ -25,12 +25,12 @@ mixin topbar(options)
     .topbar__spacer(data-css="flex-1")
     .topbar__search(data-css="relative w-72")
         i.far.fa-lg.fa-magnifying-glass.topbar__search-icon(data-css="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground")
-        input(type="text" placeholder="Search devices, IMEI...").topbar__search-input(data-css="flex h-10 w-full rounded-md border px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm pl-9 bg-muted/50 border-border")
+        input(type="text" placeholder="Search devices, IMEI..." data-css="flex h-10 w-full rounded-md border px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm pl-9 bg-muted/50 border-border").topbar__search-input
     .topbar__sync(data-css="flex items-center gap-2 text-sm")
         .topbar__sync-status(data-css="flex items-center gap-1.5 text-muted-foreground")
             .topbar__sync-indicator(data-css="h-2 w-2 rounded-full bg-status-completed animate-pulse")
             span.topbar__sync-text#syncSpanText(data-css="text-xs") Synced 21:22
-        button(type="button").topbar__sync-button(data-css="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50")
+        button(type="button" data-css="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50").topbar__sync-button
             i.far.fa-arrows-rotate.fa-lg
 
     button.topbar__notification-button

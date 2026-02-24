@@ -28,7 +28,7 @@ mixin sidebar(options)
                     i(class=item.icon)
                 span(class="flex-1" data-css="sidebar__nav-label")= item.name
                 if (badgeCount > 0)
-                    div(class=`inline-flex items-center rounded-full border px-2.5 py-0.5 font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent text-xs ${(item.badge === 'rework') ? 'is-destructive' : 'is-secondary'}` data-css="sidebar__nav-badge")= badgeCount
+                    div(class=`inline-flex items-center rounded-full border px-2.5 py-0.5 font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent text-xs ${(item.badge === 'rework') ? 'bg-destructive text-destructive-foreground hover:bg-destructive/80' : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'}` data-css="sidebar__nav-badge")= badgeCount
 
     .sidebar__footer(class="border-t border-border p-3" data-css="sidebar__footer")
         .sidebar__user(class="flex items-center gap-3 rounded-lg bg-sidebar-accent p-3" data-css="sidebar__user")
