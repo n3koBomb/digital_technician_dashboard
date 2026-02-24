@@ -34,7 +34,7 @@ mixin sidebar(options)
         .sidebar__user(class="flex items-center gap-3 rounded-lg bg-sidebar-accent p-3" data-css="sidebar__user")
             .sidebar__user-avatar(class="flex h-9 w-9 items-center justify-center rounded-full bg-primary/20 text-primary font-semibold text-sm" data-css="sidebar__user-avatar") DE
             .sidebar__user-info(class="flex-1 min-w-0" data-css="sidebar__user-info")
-                .sidebar__user-name(class="truncate text-sm font-medium text-foreground" data-css="sidebar__user-name") #{user.firstName} #{user.lastName}
-                .sidebar__user-role(class="truncate text-xs text-muted-foreground" data-css="sidebar__user-role")= user.role
+                .sidebar__user-name(class="truncate text-sm font-medium text-foreground" data-css="sidebar__user-name") 
+                .sidebar__user-role(class="truncate text-xs text-muted-foreground" data-css="sidebar__user-role")
             button(class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors" data-css="sidebar__logout")
                 i.far.fa-arrow-right-from-bracket.fa-lg

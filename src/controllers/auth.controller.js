@@ -2,18 +2,23 @@
 // ESM-compatible Auth Controller
 
 import bcrypt from 'bcrypt';
-// import User from '../models/User.js';
+import { Users } from '../models/User.js';
 
 export const login = async (req, res) => {
     const { identifier, password, remember } = req.body;
 
     try {
-        const user = await User.findOne({
-            $or: [{ email: identifier }, { username: identifier }],
-        });
+        const user = Users.find(u =>
+            u.email === identifier || u.username === identifier
+        );
 
         if (!user) {
             req.flash('error', 'Benutzer nicht gefunden.');
+            return res.redirect('/auth/login');
+        }
+
+        if (user.status !== 'active') {
+            req.flash('error', 'Account ist deaktiviert.');
             return res.redirect('/auth/login');
         }
 
@@ -52,32 +57,29 @@ export const register = async (req, res) => {
         return res.redirect('/auth/login');
     }
 
-    try {
-        const existing = await User.findOne({
-            $or: [{ email }, { username }],
-        });
+    const existing = User.find(u =>
+        u.email === email || u.username === username
+    );
 
-        if (existing) {
-            req.flash('error', 'Benutzer existiert bereits.');
-            return res.redirect('/auth/login');
-        }
-
-        const passwordHash = await bcrypt.hash(password, 12);
-
-        await User.create({
-            username,
-            email,
-            passwordHash,
-            role: role || 'technician',
-        });
-
-        req.flash('success', 'Konto erstellt. Bitte einloggen.');
-        return res.redirect('/auth/login');
-    } catch (err) {
-        console.error('[AUTH][REGISTER]', err);
-        req.flash('error', 'Registrierung fehlgeschlagen.');
+    if (existing) {
+        req.flash('error', 'Benutzer existiert bereits.');
         return res.redirect('/auth/login');
     }
+
+    const passwordHash = await bcrypt.hash(password, 12);
+
+    Users.push({
+        id: `usr-${Date.now()}`,
+        username,
+        email,
+        passwordHash,
+        role: role || 'technician',
+        status: 'active',
+        createdAt: new Date()
+    });
+
+    req.flash('success', 'Konto erstellt.');
+    return res.redirect('/auth/login');
 };
 
 export const logout = (req, res) => {

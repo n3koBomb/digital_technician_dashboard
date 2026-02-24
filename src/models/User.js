@@ -1,94 +1,33 @@
-// src/models/User.js
-// ESM – User Model (Mongoose)
+import bcrypt from 'bcrypt';
 
-import mongoose from 'mongoose';
+const hash = await bcrypt.hash('Test1234!', 12);
 
-const { Schema } = mongoose;
-
-// =====================================================
-// User Schema
-// =====================================================
-const UserSchema = new Schema(
+export const Users = [
     {
-        username: {
-            type: String,
-            required: true,
-            unique: true,
-            trim: true,
-            minlength: 3,
-            maxlength: 32,
-        },
-
-        email: {
-            type: String,
-            required: true,
-            unique: true,
-            lowercase: true,
-            trim: true,
-            match: [/^\S+@\S+\.\S+$/, 'Ungültige E-Mail-Adresse'],
-        },
-
-        passwordHash: {
-            type: String,
-            required: true,
-        },
-
-        role: {
-            type: String,
-            enum: ['technician', 'admin', 'qc', 'analyzer'],
-            default: 'technician',
-        },
-
-        status: {
-            type: String,
-            enum: ['active', 'disabled', 'pending'],
-            default: 'active',
-        },
-
-        lastLoginAt: {
-            type: Date,
-        },
-
-        failedLoginAttempts: {
-            type: Number,
-            default: 0,
-        },
-
-        lockUntil: {
-            type: Date,
-        },
+        id: 'usr-001',
+        username: 'alex',
+        email: 'admin@repairtech.com',
+        passwordHash: hash,
+        role: 'admin',
+        status: 'active',
+        createdAt: new Date('2024-01-01')
     },
     {
-        timestamps: true,
-        versionKey: false,
+        id: 'usr-002',
+        username: 'jordan',
+        email: 'receiving@repairtech.com',
+        passwordHash: hash,
+        role: 'goods_receiving',
+        status: 'active',
+        createdAt: new Date('2024-01-15')
+    },
+    {
+        id: 'usr-003',
+        username: 'sam',
+        email: 'tech1@repairtech.com',
+        passwordHash: hash,
+        role: 'technician',
+        status: 'active',
+        createdAt: new Date('2024-01-20')
     }
-);
-
-// =====================================================
-// Indexes
-// =====================================================
-UserSchema.index({ email: 1 });
-UserSchema.index({ username: 1 });
-
-// =====================================================
-// Instance Methods
-// =====================================================
-UserSchema.methods.isLocked = function () {
-    return this.lockUntil && this.lockUntil > Date.now();
-};
-
-// =====================================================
-// Static Helpers
-// =====================================================
-UserSchema.statics.findByIdentifier = function (identifier) {
-    return this.findOne({
-        $or: [{ email: identifier }, { username: identifier }],
-    });
-};
-
-// =====================================================
-// Export Model (Safe for Hot-Reload)
-// =====================================================
-const User = mongoose.models.User || mongoose.model('User', UserSchema);
-
-export default User;
+];

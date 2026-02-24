@@ -16,30 +16,23 @@ block head
 //- =====================================================
 //- BODY / AUTH WRAPPER
 //- =====================================================
-block body
-    body.auth-layout(data-layout="auth")
-
-        //- Zentrale Auth-Stage
-        main.auth-main
-            .auth-container
-
-                //- Branding / Logo
-                .auth-header
-                    +logo()
-
-                //- Flash Messages (Errors, Success, Info)
-                .auth-messages
-                    +flashMessage({dismissible: true})
-
-                //- Auth-Content (Login, Register, Reset etc.)
-                .auth-content
-                    block content
-                        //- Default Fallback
-                        p Auth-Content nicht definiert.
-
-        //- Page-spezifische Scripts
-        block pageScript
-
-        //- Auth-weite Scripts (leichtgewichtig, kein App-Bundle)
-        block authScripts
-            script(src="/script/auth.js", defer)
+block appRoot
+    //- Zentrale Auth-Stage
+    main.auth-main
+        .auth-container
+            //- Branding / Logo
+            .auth-header
+                +logo()
+            //- Flash Messages (Errors, Success, Info)
+            .auth-messages
+                +flashMessage({dismissible: true})
+            //- Auth-Content (Login, Register, Reset etc.)
+            .auth-content
+                block content
+                    //- Default Fallback
+                    p Auth-Content nicht definiert.
+    //- Page-spezifische Scripts
+    block pageScript
+    //- Auth-weite Scripts (leichtgewichtig, kein App-Bundle)
+    block appScripts
+        script(src="/script/auth.js", defer)

@@ -9,7 +9,7 @@ import { isAuthenticated, isGuest } from '../middlewares/auth.middleware.js';
 import { csrfProtection } from '../middlewares/csrf.middleware.js';
 
 // Controller (kapselt Business-Logik)
-// import { login, register, logout } from '../controllers/auth.controller.js';
+import { login, register, logout } from '../controllers/auth.controller.js';
 
 // =====================================================
 // GET: Login / Registrierung
@@ -29,17 +29,17 @@ router.get('/login', isGuest, csrfProtection, (req, res) => {
 // =====================================================
 // POST: Login
 // =====================================================
-router.post('/login', isGuest, csrfProtection); // login
+router.post('/login', isGuest, csrfProtection, login); // login
 
 // =====================================================
 // POST: Registrierung
 // =====================================================
-router.post('/register', isGuest, csrfProtection); // register
+router.post('/register', isGuest, csrfProtection, register); // register
 
 // =====================================================
 // POST: Logout
 // =====================================================
-router.post('/logout', isAuthenticated); // logout
+router.post('/logout', isAuthenticated, logout); // logout
 
 // =====================================================
 // GET: Passwort vergessen

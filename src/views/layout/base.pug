@@ -99,41 +99,28 @@ html(lang=locale || "de")
     // =====================================================
     // BODY
     // =====================================================
-    block body
-        body(class=bodyClass || "")
-            div#progress-bar.progress-bar
-
-            // -------------------------------------------------
-            // App Root
-            // -------------------------------------------------
-            #app
-                block header
-                block sidebar
-
-                main#content
-                    block content
-
-                block footer
-
-            // -------------------------------------------------
-            // Globale Modals / Overlays
-            // -------------------------------------------------
-            block modals
-
-            // -------------------------------------------------
-            // Runtime Config (whitelisted)
-            // -------------------------------------------------
-            if runtimeConfig
-                script.
-                    window.__APP_CONFIG__ = !{JSON.stringify(runtimeConfig)}
-
-            // -------------------------------------------------
-            // Globale Scripts
-            // -------------------------------------------------
-            block appScripts
-                script(src="/script/app.js" defer)
-
-            // -------------------------------------------------
-            // Seiten-spezifische Scripts
-            // -------------------------------------------------
-            block pageScript
+    body.app-layout(data-layout="app")
+        div#progress-bar.progress-bar
+        // -------------------------------------------------
+        // App Root
+        // -------------------------------------------------
+        #root
+            block appRoot
+        // -------------------------------------------------
+        // Globale Modals / Overlays
+        // -------------------------------------------------
+        block modals
+        // -------------------------------------------------
+        // Runtime Config (whitelisted)
+        // -------------------------------------------------
+        if runtimeConfig
+            script.
+                window.__APP_CONFIG__ = !{JSON.stringify(runtimeConfig)}
+        // -------------------------------------------------
+        // Globale Scripts
+        // -------------------------------------------------
+        block appScripts
+        // -------------------------------------------------
+        // Seiten-spezifische Scripts
+        // -------------------------------------------------
+        block pageScript

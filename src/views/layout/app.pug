@@ -12,46 +12,40 @@ include ../partials/footer.pug
 //- =====================================================
 //- BODY / APP WRAPPER
 //- =====================================================
-block body
+block appRoot
     //- if isHX
     //-     block content
     //- else
-    body.app-layout(data-layout="app")#root
-        //- Notifications (global, overlayfähig)
-        block notifications
-            +notifications()
-
-        //- Hauptcontainer
-        div(class="flex h-screen overflow-hidden" data-css="app-container")
-            //- Sidebar (Navigation / Rollenabhängig)
-            aside(class="flex h-screen w-64 flex-col bg-gradient-sidebar border-r border-border" data-css="app-sidebar")
-                +sidebar({
+        
+    +notifications()
+    //- Hauptcontainer
+    div(class="flex h-screen overflow-hidden" data-css="app-container")
+        //- Sidebar (Navigation / Rollenabhängig)
+        aside(class="flex h-screen w-64 flex-col bg-gradient-sidebar border-r border-border" data-css="app-sidebar")
+            +sidebar({
+                activePath: currentPath,
+                user
+            })
+        //- Content-Bereich
+        div(class="flex flex-1 flex-col overflow-hidden" data-css="app-main")
+            //- Topbar (User, Breadcrumbs, Actions)
+            header(role="banner" class="sticky top-0 z-40 flex h-16 items-center gap-4 border-b border-border bg-background/95 backdrop-blur px-6" data-css="app-topbar")
+                +topbar({
                     activePath: currentPath,
                     user
                 })
-            //- Content-Bereich
-            div(class="flex flex-1 flex-col overflow-hidden" data-css="app-main")
-                //- Topbar (User, Breadcrumbs, Actions)
-                header(role="banner" class="sticky top-0 z-40 flex h-16 items-center gap-4 border-b border-border bg-background/95 backdrop-blur px-6" data-css="app-topbar")
-                    +topbar({
-                        activePath: currentPath,
-                        user
-                    })
-                //- Seiteninhalt
-                main.app-content#app-content
-                    block content
-                        //- Default Fallback
-                        p App-Content nicht definiert.
-                //- Footer
-                footer.app-footer
-                    +footer({showVersion: true, showEnv: true, showLinks: true})
-
-        //- Modals (global gesammelt, damit z-index nicht eskaliert)
-        block modals
-
-        //- Page-spezifische Scripts
-        block pageScript
-
-        //- App-weite Scripts
-        block appScripts
-            script(src="/script/app.js", defer)
+            //- Seiteninhalt
+            main.app-content#app-content
+                block content
+                    //- Default Fallback
+                    p App-Content nicht definiert.
+            //- Footer
+            footer.app-footer
+                +footer({showVersion: true, showEnv: true, showLinks: true})
+    //- Modals (global gesammelt, damit z-index nicht eskaliert)
+    block modals
+    //- Page-spezifische Scripts
+    block pageScript
+    //- App-weite Scripts
+    block appScripts
+        script(src="/script/app.js", defer)
